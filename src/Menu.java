@@ -28,6 +28,12 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
     JCheckBox ReadChoice;
     boolean ReadBool;
 
+    JComboBox SortChoice;
+    String SortType = "";
+
+    JCheckBox SortDirection;
+    boolean SortBool;
+
     JButton SaveButton;
 
     UIManager Manager;
@@ -90,6 +96,12 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
         ReadChoice.addItemListener(this);
         this.add(ReadChoice, BorderLayout.CENTER);
 
+        //Sort Selection
+        String[] SortChoices = new String[] {"", "Novel Name", "Author Name", "Novel Category", "Owned", "Read"};
+        SortChoice = new JComboBox(SortChoices);
+        SortChoice.addItemListener(this);
+        this.add(SortChoice, BorderLayout.CENTER);
+
         //Save button
         SaveButton = new JButton("Save");
         SaveButton.addActionListener(this);
@@ -98,6 +110,7 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
     public List<Media> FilterAndSort(Media[] Data){
         List<Media> DisplayData = new ArrayList<>(Arrays.asList(Data));
 
+        // Filters the data
         DisplayData.removeIf(s ->
                         (!NameString.equals("") && !s.Name.toUpperCase().contains(NameString.toUpperCase())) ||
                                 (!AuthorString.equals("") && !s.Author.toUpperCase().contains(AuthorString.toUpperCase())) ||
@@ -107,10 +120,20 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
                                 (OwnedBool && !s.Owned) ||
             (ReadBool && !s.Read));
 
+        // Sorts the data
+        switch(SortType){
+            case("Novel Name") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Name,t.Name));}
+            case("Author Name") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Author,t.Author));}
+            case("Novel Category") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Category,t.Category));}
+            case("Owned") -> {DisplayData.sort((s,t) -> Boolean.compare(s.Owned,t.Owned));}
+            case("Read") -> {DisplayData.sort((s,t) -> Boolean.compare(s.Read,t.Read));}
+            default -> {}
+        }
+
         return DisplayData;
     }
     public void itemStateChanged(ItemEvent e){
-        Object source = e.getItemSelectable();
+        Object source = e.getSource();
 
         if (source == CategoryChoice){
             CategoryString = UTILS.NameToCategory((String) ((JComboBox) source).getSelectedItem());
@@ -118,6 +141,8 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
             OwnedBool = !OwnedBool;
         }else if (source == ReadChoice){
             ReadBool = !ReadBool;
+        } else if (source == SortChoice){
+            SortType = (String) ((JComboBox) source).getSelectedItem();
         }
 
         Manager.ListSetUp(Manager.Data, Manager.frame);

@@ -47,7 +47,6 @@ public class UTILS {
     public static void SaveData(Media[] Data){
         try {
             FileWriter Saver = new FileWriter(Filename);
-            System.out.println("Saved");
             for (int i=0;i<Data.length;i++){
                 Saver.write(i + "," + Data[i].Name + "," + Data[i].Author + "," + Data[i].ReleaseDate.toSaveString() + "," + Data[i].TimelineDate.toString() + "," + UTILS.CategoryToName.get(Data[i].Category) + "," + (Data[i].Owned?"True":"False") + "," + (Data[i].Read?"True":"False") + "\n");
             }
