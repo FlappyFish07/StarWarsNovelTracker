@@ -1,9 +1,11 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.nio.file.*;
 public class UTILS {
+    public static final String Filename = "C://Users//ArchieDraper//IdeaProjects//StarWarsNovelTracker//src//Data.csv";
     public static final HashMap<String, String> CategoryToName = new HashMap<>();
     static {
         CategoryToName.put("", "");
@@ -15,7 +17,7 @@ public class UTILS {
     public static String NameToCategory(String s){
         return s.strip().toUpperCase().replaceAll("[^A-Z]","");
     }
-    public static Media[] ParseData(String Filename) {
+    public static Media[] ParseData() {
         Media[] ReturnList;
         try {
             File Data = new File(Filename);
@@ -27,7 +29,7 @@ public class UTILS {
             int i = 0;
             while (Reader.hasNextLine()) {
                 String CurrentData = Reader.nextLine();
-                ReturnList[i] = new Media(CurrentData.split(",")[1],CurrentData.split(",")[2],new RealDate(CurrentData.split(",")[3], true),new LegendsDate(CurrentData.split(",")[4]),CurrentData.split(",")[5],CurrentData.split(",")[6]== "True"?true:false,CurrentData.split(",")[7]== "True"?true:false);
+                ReturnList[i] = new Media(CurrentData.split(",")[1],CurrentData.split(",")[2],new RealDate(CurrentData.split(",")[3], true),new LegendsDate(CurrentData.split(",")[4]),CurrentData.split(",")[5],(CurrentData.split(",")[6].equals("True"))?true:false,(CurrentData.split(",")[7].equals("True"))?true:false);
                 i++;
             }
             return ReturnList;
@@ -40,6 +42,20 @@ public class UTILS {
             e.printStackTrace();
         }
         return new Media[0];
+    }
+
+    public static void SaveData(Media[] Data){
+        try {
+            FileWriter Saver = new FileWriter(Filename);
+            System.out.println("Saved");
+            for (int i=0;i<Data.length;i++){
+                Saver.write(i + "," + Data[i].Name + "," + Data[i].Author + "," + Data[i].ReleaseDate.toSaveString() + "," + Data[i].TimelineDate.toString() + "," + UTILS.CategoryToName.get(Data[i].Category) + "," + (Data[i].Owned?"True":"False") + "," + (Data[i].Read?"True":"False") + "\n");
+            }
+            Saver.close();
+        } catch (IOException e){
+            System.out.println("File not found");
+            e.printStackTrace();
+        }
     }
 
 }

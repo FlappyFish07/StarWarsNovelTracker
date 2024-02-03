@@ -9,7 +9,7 @@ import java.util.List;
 
 import static java.lang.Math.max;
 
-public class Menu extends JPanel implements ItemListener, KeyListener {
+public class Menu extends JPanel implements ItemListener, KeyListener, ActionListener {
     JTextField NameChoice;
     String NameString = "";
 
@@ -27,6 +27,8 @@ public class Menu extends JPanel implements ItemListener, KeyListener {
 
     JCheckBox ReadChoice;
     boolean ReadBool;
+
+    JButton SaveButton;
 
     UIManager Manager;
     public Menu(UIManager Manager){
@@ -87,6 +89,11 @@ public class Menu extends JPanel implements ItemListener, KeyListener {
         ReadChoice = new JCheckBox("Read");
         ReadChoice.addItemListener(this);
         this.add(ReadChoice, BorderLayout.CENTER);
+
+        //Save button
+        SaveButton = new JButton("Save");
+        SaveButton.addActionListener(this);
+        this.add(SaveButton,BorderLayout.SOUTH);
     }
     public List<Media> FilterAndSort(Media[] Data){
         List<Media> DisplayData = new ArrayList<>(Arrays.asList(Data));
@@ -95,7 +102,7 @@ public class Menu extends JPanel implements ItemListener, KeyListener {
                         (!NameString.equals("") && !s.Name.toUpperCase().contains(NameString.toUpperCase())) ||
                                 (!AuthorString.equals("") && !s.Author.toUpperCase().contains(AuthorString.toUpperCase())) ||
             //Release Date TODO
-            //Timeline Date
+            //Timeline Date TODO
             (!CategoryString.equals("") && !s.Category.equals(UTILS.NameToCategory(CategoryString))) ||
                                 (OwnedBool && !s.Owned) ||
             (ReadBool && !s.Read));
@@ -151,5 +158,14 @@ public class Menu extends JPanel implements ItemListener, KeyListener {
         JTextField textField = (JTextField) e.getSource();
         String text = textField.getText();
         textField.setText(text);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+
+        if (source == SaveButton){
+            UTILS.SaveData(Manager.Data);
+        }
     }
 }

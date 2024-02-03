@@ -38,6 +38,7 @@ public class RealDate {
         }
         return false;
     }
+    public String toSaveString(){return Month + "/" + Day+ "/" + Year;}
     public String toString(){
         return Day + " " + MONTHS[Month-1] + " " + Year;
     }
