@@ -2,19 +2,19 @@ import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 
-import javax.sound.sampled.Line;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 
 public class Media extends JPanel implements ItemListener, ActionListener {
     public int index;
     public String Name;
     public String Author;
-    public RealDate ReleaseDate;
+    public Calendar ReleaseDate;
     public LegendsDate TimelineDate;
     public String Category;
     public boolean Owned;
@@ -22,7 +22,7 @@ public class Media extends JPanel implements ItemListener, ActionListener {
     public Media[] Children;
     public boolean ShowChildren = true;
 
-    public Media(int index, String Name, String Author, RealDate ReleaseDate, LegendsDate TimelineDate, String Category, boolean Owned, boolean Read, Media[] Children){
+    public Media(int index, String Name, String Author, Calendar ReleaseDate, LegendsDate TimelineDate, String Category, boolean Owned, boolean Read, Media[] Children){
         this.index = index;
         this.Name = Name;
         this.Author = Author;
@@ -47,7 +47,6 @@ public class Media extends JPanel implements ItemListener, ActionListener {
     public JTextArea DisplayCategory;
     public JCheckBox DisplayOwned;
     public JCheckBox DisplayRead;
-    public JPanel ChildMenu;
     public JButton DisplayChildren;
     public JSeparator DisplayChild;
 
@@ -72,7 +71,7 @@ public class Media extends JPanel implements ItemListener, ActionListener {
         DisplayAuthor.setEditable(false);
         rootPanel.add(DisplayAuthor, BorderLayout.CENTER);
 
-        DisplayDate = new JTextArea(this.ReleaseDate.toString());
+        DisplayDate = new JTextArea(new SimpleDateFormat("d MMMM y").format(this.ReleaseDate.getTime()));
         DisplayDate.setEditable(false);
         rootPanel.add(DisplayDate, BorderLayout.CENTER);
 

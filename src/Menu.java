@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import static java.lang.Math.max;
-
 public class Menu extends JPanel implements ItemListener, KeyListener, ActionListener {
     JTextField NameChoice;
     String NameString = "";

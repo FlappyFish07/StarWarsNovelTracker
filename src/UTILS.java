@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.nio.file.*;
 public class UTILS {
@@ -29,14 +30,11 @@ public class UTILS {
             int i = 0;
             while (Reader.hasNextLine()) {
                 String CurrentData = Reader.nextLine();
-                ReturnList[i] = new Media(i, CurrentData.split(",")[1],CurrentData.split(",")[2],new RealDate(CurrentData.split(",")[3], true),new LegendsDate(CurrentData.split(",")[4]),CurrentData.split(",")[5],(CurrentData.split(",")[6].equals("True"))?true:false,(CurrentData.split(",")[7].equals("True"))?true:false, new Media[0]);
+                ReturnList[i] = new Media(i, CurrentData.split(",")[1],CurrentData.split(",")[2],new GregorianCalendar(Integer.parseInt(CurrentData.split(",")[3].split("/")[2]),Integer.parseInt(CurrentData.split(",")[3].split("/")[0])-1,Integer.parseInt(CurrentData.split(",")[3].split("/")[1])),new LegendsDate(CurrentData.split(",")[4]),CurrentData.split(",")[5], CurrentData.split(",")[6].equals("True"), CurrentData.split(",")[7].equals("True"), new Media[0]);
                 i++;
             }
             return ReturnList;
 
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found");
-            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("File not found");
             e.printStackTrace();
@@ -48,7 +46,7 @@ public class UTILS {
         try {
             FileWriter Saver = new FileWriter(Filename);
             for (int i=0;i<Data.length;i++){
-                Saver.write(i + "," + Data[i].Name + "," + Data[i].Author + "," + Data[i].ReleaseDate.toSaveString() + "," + Data[i].TimelineDate.toString() + "," + UTILS.CategoryToName.get(Data[i].Category) + "," + (Data[i].Owned?"True":"False") + "," + (Data[i].Read?"True":"False") + "\n");
+                Saver.write(i + "," + Data[i].Name + "," + Data[i].Author + "," + new SimpleDateFormat("M/d/y").format(Data[i].ReleaseDate.getTime()) + "," + Data[i].TimelineDate.toString() + "," + UTILS.CategoryToName.get(Data[i].Category) + "," + (Data[i].Owned?"True":"False") + "," + (Data[i].Read?"True":"False") + "\n");
             }
             Saver.close();
         } catch (IOException e){
