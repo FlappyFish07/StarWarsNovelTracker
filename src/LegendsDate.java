@@ -21,13 +21,13 @@ public class LegendsDate {
         String[] SplitDate = Date.split("-");
         if(SplitDate.length == 2){
             StartDate = Integer.parseInt(SplitDate[0].split(" ")[0]);
-            ABY = SplitDate[0].split(" ")[1] == "ABY" ? true : false;
+            ABY = SplitDate[0].split(" ")[1].equals("ABY") ? true : false;
             EndDate = Integer.parseInt(SplitDate[1].strip().split(" ")[0]);
-            EndABY = SplitDate[1].strip().split(" ")[1] == "ABY" ? true : false;
+            EndABY = SplitDate[1].strip().split(" ")[1].equals("ABY") ? true : false;
             this.OneDate = false;
         } else {
             StartDate = Integer.parseInt(Date.split(" ")[0]);
-            ABY = Date.split(" ")[1] == "ABY" ? true : false;
+            ABY = Date.split(" ")[1].equals("ABY") ? true : false;
             this.OneDate = true;
         }
     }

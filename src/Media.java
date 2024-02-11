@@ -1,9 +1,17 @@
+import com.formdev.flatlaf.FlatDarculaLaf;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
+
+import javax.sound.sampled.Line;
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicArrowButton;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.*;
 
 
-public class Media extends JPanel implements ItemListener{
+public class Media extends JPanel implements ItemListener, ActionListener {
+    public int index;
     public String Name;
     public String Author;
     public RealDate ReleaseDate;
@@ -11,8 +19,11 @@ public class Media extends JPanel implements ItemListener{
     public String Category;
     public boolean Owned;
     public boolean Read;
+    public Media[] Children;
+    public boolean ShowChildren = true;
 
-    public Media(String Name, String Author, RealDate ReleaseDate, LegendsDate TimelineDate, String Category, boolean Owned, boolean Read){
+    public Media(int index, String Name, String Author, RealDate ReleaseDate, LegendsDate TimelineDate, String Category, boolean Owned, boolean Read, Media[] Children){
+        this.index = index;
         this.Name = Name;
         this.Author = Author;
         this.ReleaseDate = ReleaseDate;
@@ -20,6 +31,7 @@ public class Media extends JPanel implements ItemListener{
         this.Category = Category.strip().toUpperCase().replaceAll("[^A-Z]","");
         this.Owned = Owned;
         this.Read = Read;
+        this.Children = Children;
 
         this.DisplayDetails();
     }
@@ -35,44 +47,85 @@ public class Media extends JPanel implements ItemListener{
     public JTextArea DisplayCategory;
     public JCheckBox DisplayOwned;
     public JCheckBox DisplayRead;
+    public JPanel ChildMenu;
+    public JButton DisplayChildren;
+    public JSeparator DisplayChild;
 
-    public void DisplayDetails(){
+    public void DisplayDetails() {
+
+        this.removeAll();
+
+        FlatDarkLaf.setup();
+
+        this.setLayout(new GridLayout((ShowChildren?Children.length:0) + 1, 1));
+
+        JPanel rootPanel = new JPanel();
+
+        DisplayChild = new JSeparator(SwingConstants.VERTICAL);
+        rootPanel.add(DisplayChild, BorderLayout.CENTER);
+
         DisplayName = new JTextArea(this.Name);
         DisplayName.setEditable(false);
-        this.add(DisplayName, BorderLayout.CENTER);
+        rootPanel.add(DisplayName, BorderLayout.CENTER);
 
         DisplayAuthor = new JTextArea(this.Author);
         DisplayAuthor.setEditable(false);
-        this.add(DisplayAuthor, BorderLayout.CENTER);
+        rootPanel.add(DisplayAuthor, BorderLayout.CENTER);
 
         DisplayDate = new JTextArea(this.ReleaseDate.toString());
         DisplayDate.setEditable(false);
-        this.add(DisplayDate, BorderLayout.CENTER);
+        rootPanel.add(DisplayDate, BorderLayout.CENTER);
 
         DisplayTimelineDate = new JTextArea(this.TimelineDate.toString());
         DisplayTimelineDate.setEditable(false);
-        this.add(DisplayTimelineDate, BorderLayout.CENTER);
+        rootPanel.add(DisplayTimelineDate, BorderLayout.CENTER);
 
         DisplayCategory = new JTextArea(UTILS.CategoryToName.get(this.Category));
         DisplayCategory.setEditable(false);
-        this.add(DisplayCategory,BorderLayout.CENTER);
+        rootPanel.add(DisplayCategory, BorderLayout.CENTER);
 
-        DisplayOwned = new JCheckBox("Owned",Owned);
+        DisplayOwned = new JCheckBox("Owned", Owned);
         DisplayOwned.addItemListener(this);
-        this.add(DisplayOwned, BorderLayout.CENTER);
+        rootPanel.add(DisplayOwned, BorderLayout.CENTER);
 
-        DisplayRead = new JCheckBox("Read",Read);
+        DisplayRead = new JCheckBox("Read", Read);
         DisplayRead.addItemListener(this);
-        this.add(DisplayRead, BorderLayout.CENTER);
+        rootPanel.add(DisplayRead, BorderLayout.CENTER);
+
+        if (Children.length != 0) {
+            DisplayChildren = new BasicArrowButton(ShowChildren?BasicArrowButton.NORTH:BasicArrowButton.SOUTH);
+            DisplayChildren.addActionListener(this);
+            rootPanel.add(DisplayChildren, BorderLayout.CENTER);
+        }
+
+        this.add(rootPanel);
+
+        if (ShowChildren) {
+            for (Media Child : Children) {
+                Child.setVisible(true);
+                this.add(Child, BorderLayout.CENTER);
+            }
+        }
     }
+
+    public GraphicsManager GM;
 
     public void itemStateChanged(ItemEvent e){
         Object source = e.getItemSelectable();
 
         if (source == DisplayOwned){
             Owned = !Owned;
-        } else if (source == DisplayRead){
+        } else if (source == DisplayRead) {
             Read = !Read;
+        }
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+
+        if (source == DisplayChildren){
+            ShowChildren = !ShowChildren;
+            GM.AddItem(index);
         }
     }
 }

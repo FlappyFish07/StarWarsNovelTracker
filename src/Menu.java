@@ -1,7 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -36,8 +35,8 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
 
     JButton SaveButton;
 
-    UIManager Manager;
-    public Menu(UIManager Manager){
+    GraphicsManager Manager;
+    public Menu(GraphicsManager Manager){
         this.Manager = Manager;
 
 
@@ -97,7 +96,7 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
         this.add(ReadChoice, BorderLayout.CENTER);
 
         //Sort Selection
-        String[] SortChoices = new String[] {"", "Novel Name", "Author Name", "Novel Category", "Owned", "Read"};
+        String[] SortChoices = new String[] {"", "Novel Name", "Author Name", "Timeline Date", "Novel Category", "Owned", "Read"};
         SortChoice = new JComboBox(SortChoices);
         SortChoice.addItemListener(this);
         this.add(SortChoice, BorderLayout.CENTER);
@@ -124,6 +123,7 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
         switch(SortType){
             case("Novel Name") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Name,t.Name));}
             case("Author Name") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Author,t.Author));}
+            case("Timeline Date") -> {DisplayData.sort(Comparator.comparingInt(s -> s.TimelineDate.toInt()));}
             case("Novel Category") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Category,t.Category));}
             case("Owned") -> {DisplayData.sort((s,t) -> Boolean.compare(s.Owned,t.Owned));}
             case("Read") -> {DisplayData.sort((s,t) -> Boolean.compare(s.Read,t.Read));}
