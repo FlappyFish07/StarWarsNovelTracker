@@ -1,6 +1,7 @@
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.google.gson.annotations.Expose;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicArrowButton;
@@ -8,50 +9,58 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 public class Media extends JPanel implements ItemListener, ActionListener {
+    @Expose
     public int index;
+    @Expose
     public String Name;
+    @Expose
     public String Author;
+    @Expose
     public Calendar ReleaseDate;
+    @Expose
     public LegendsDate TimelineDate;
+    @Expose
     public String Category;
+    @Expose
     public boolean Owned;
+    @Expose
     public boolean Read;
+    @Expose
     public Media[] Children;
-    public boolean ShowChildren = true;
+    public boolean ShowChildren = false;
 
-    public Media(int index, String Name, String Author, Calendar ReleaseDate, LegendsDate TimelineDate, String Category, boolean Owned, boolean Read, Media[] Children){
+    public Media(int index, String Name, String Author, String ReleaseDate, String TimelineDate, String Category, boolean Owned, boolean Read, Media[] Children){
         this.index = index;
         this.Name = Name;
         this.Author = Author;
-        this.ReleaseDate = ReleaseDate;
-        this.TimelineDate = TimelineDate;
+        this.ReleaseDate = new GregorianCalendar(Integer.parseInt(ReleaseDate.split("/")[2]),Integer.parseInt(ReleaseDate.split("/")[0])-1,Integer.parseInt(ReleaseDate.split("/")[1]));
+        this.TimelineDate = new LegendsDate(TimelineDate);
         this.Category = Category.strip().toUpperCase().replaceAll("[^A-Z]","");
         this.Owned = Owned;
         this.Read = Read;
         this.Children = Children;
-
-        this.DisplayDetails();
     }
+    public Media(){}
 
     public String toString() {
         return Name + ", " + Author + ", " + ReleaseDate + ", " + TimelineDate + ", " + Category + ", " + (Owned?"Owned":"Not owned") + ", " + (Owned?"Read":"Unread");
     }
 
-    public JTextArea DisplayName;
-    public JTextArea DisplayAuthor;
-    public JTextArea DisplayDate;
-    public JTextArea DisplayTimelineDate;
-    public JTextArea DisplayCategory;
-    public JCheckBox DisplayOwned;
-    public JCheckBox DisplayRead;
-    public JButton DisplayChildren;
-    public JSeparator DisplayChild;
+    private JTextArea DisplayName;
+    private JTextArea DisplayAuthor;
+    private JTextArea DisplayDate;
+    private JTextArea DisplayTimelineDate;
+    private JTextArea DisplayCategory;
+    private JCheckBox DisplayOwned;
+    private JCheckBox DisplayRead;
+    private JButton DisplayChildren;
+    private JSeparator DisplayChild;
 
     public void DisplayDetails() {
-
         this.removeAll();
 
         FlatDarkLaf.setup();
@@ -79,7 +88,7 @@ public class Media extends JPanel implements ItemListener, ActionListener {
         DisplayTimelineDate.setEditable(false);
         rootPanel.add(DisplayTimelineDate, BorderLayout.CENTER);
 
-        DisplayCategory = new JTextArea(UTILS.CategoryToName.get(this.Category));
+        DisplayCategory = new JTextArea(this.Category);
         DisplayCategory.setEditable(false);
         rootPanel.add(DisplayCategory, BorderLayout.CENTER);
 
@@ -107,7 +116,11 @@ public class Media extends JPanel implements ItemListener, ActionListener {
         }
     }
 
-    public GraphicsManager GM;
+    private transient GraphicsManager GM;
+
+    public void setGM(GraphicsManager GM){
+        this.GM = GM;
+    }
 
     public void itemStateChanged(ItemEvent e){
         Object source = e.getItemSelectable();

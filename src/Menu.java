@@ -1,9 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 
 public class Menu extends JPanel implements ItemListener, KeyListener, ActionListener {
@@ -94,10 +92,15 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
         this.add(ReadChoice, BorderLayout.CENTER);
 
         //Sort Selection
-        String[] SortChoices = new String[] {"", "Novel Name", "Author Name", "Timeline Date", "Novel Category", "Owned", "Read"};
+        String[] SortChoices = new String[] {"", "Novel Name", "Author Name", "Timeline Date", "Release Date", "Novel Category", "Owned", "Read"};
         SortChoice = new JComboBox(SortChoices);
         SortChoice.addItemListener(this);
         this.add(SortChoice, BorderLayout.CENTER);
+
+        //Sort Inverse
+        SortDirection = new JCheckBox("Inverse Sort");
+        SortDirection.addItemListener(this);
+        this.add(SortDirection, BorderLayout.CENTER);
 
         //Save button
         SaveButton = new JButton("Save");
@@ -113,7 +116,7 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
                                 (!AuthorString.equals("") && !s.Author.toUpperCase().contains(AuthorString.toUpperCase())) ||
             //Release Date TODO
             //Timeline Date TODO
-            (!CategoryString.equals("") && !s.Category.equals(UTILS.NameToCategory(CategoryString))) ||
+            (!CategoryString.equals("") && !s.Category.equals(CategoryString)) ||
                                 (OwnedBool && !s.Owned) ||
             (ReadBool && !s.Read));
 
@@ -122,11 +125,14 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
             case("Novel Name") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Name,t.Name));}
             case("Author Name") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Author,t.Author));}
             case("Timeline Date") -> {DisplayData.sort(Comparator.comparingInt(s -> s.TimelineDate.toInt()));}
+            case("Release Date") -> {DisplayData.sort(Comparator.comparing(s -> s.ReleaseDate));}
             case("Novel Category") -> {DisplayData.sort((s,t) -> String.CASE_INSENSITIVE_ORDER.compare(s.Category,t.Category));}
             case("Owned") -> {DisplayData.sort((s,t) -> Boolean.compare(s.Owned,t.Owned));}
             case("Read") -> {DisplayData.sort((s,t) -> Boolean.compare(s.Read,t.Read));}
             default -> {}
         }
+
+        if (SortBool) {Collections.reverse(DisplayData);}
 
         return DisplayData;
     }
@@ -134,13 +140,15 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
         Object source = e.getSource();
 
         if (source == CategoryChoice){
-            CategoryString = UTILS.NameToCategory((String) ((JComboBox) source).getSelectedItem());
+            CategoryString = ((String) ((JComboBox) source).getSelectedItem());
         } else if (source == OwnedChoice){
             OwnedBool = !OwnedBool;
         }else if (source == ReadChoice){
             ReadBool = !ReadBool;
         } else if (source == SortChoice){
             SortType = (String) ((JComboBox) source).getSelectedItem();
+        } else if (source == SortDirection){
+            SortBool = !SortBool;
         }
 
         Manager.ListSetUp(Manager.Data, Manager.frame);
@@ -188,7 +196,7 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
         Object source = e.getSource();
 
         if (source == SaveButton){
-            UTILS.SaveData(Manager.Data);
+            UTILS.SaveJSONData(Manager.Data);
         }
     }
 }

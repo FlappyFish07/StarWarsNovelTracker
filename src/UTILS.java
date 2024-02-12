@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.nio.file.*;
+import com.google.gson.*;
+
 public class UTILS {
-    public static final String Filename = "C://Users//ArchieDraper//IdeaProjects//StarWarsNovelTracker//src//Data.csv";
+    public static final String Filename = "out/production/StarWarsNovelTracker/Data/SaveData.json";
     public static final HashMap<String, String> CategoryToName = new HashMap<>();
     static {
         CategoryToName.put("", "");
@@ -14,9 +16,6 @@ public class UTILS {
         CategoryToName.put("SHORTSTORY", "Short Story");
         CategoryToName.put("JUNIORREADER", "Junior Reader");
         CategoryToName.put("ADULTNOVEL", "Adult Novel");
-    }
-    public static String NameToCategory(String s){
-        return s.strip().toUpperCase().replaceAll("[^A-Z]","");
     }
     public static Media[] ParseData() {
         Media[] ReturnList;
@@ -30,12 +29,30 @@ public class UTILS {
             int i = 0;
             while (Reader.hasNextLine()) {
                 String CurrentData = Reader.nextLine();
-                ReturnList[i] = new Media(i, CurrentData.split(",")[1],CurrentData.split(",")[2],new GregorianCalendar(Integer.parseInt(CurrentData.split(",")[3].split("/")[2]),Integer.parseInt(CurrentData.split(",")[3].split("/")[0])-1,Integer.parseInt(CurrentData.split(",")[3].split("/")[1])),new LegendsDate(CurrentData.split(",")[4]),CurrentData.split(",")[5], CurrentData.split(",")[6].equals("True"), CurrentData.split(",")[7].equals("True"), new Media[0]);
+                ReturnList[i] = new Media(i, CurrentData.split(",")[1], CurrentData.split(",")[2], CurrentData.split(",")[3], CurrentData.split(",")[4], CurrentData.split(",")[5], CurrentData.split(",")[6].equals("True"), CurrentData.split(",")[7].equals("True"), new Media[0]);
                 i++;
             }
             return ReturnList;
 
         } catch (IOException e) {
+            System.out.println("File not found");
+            e.printStackTrace();
+        }
+        return new Media[0];
+    }
+    public static Media[] ParseJSONData(){
+        try {
+            Media[] ReturnList;
+            String FileData = Files.readString(Paths.get(Filename));
+            GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation();
+            builder.registerTypeAdapter(Calendar.class, new CalendarDeserializer());
+            builder.registerTypeAdapter(LegendsDate.class, new TimelineDeserializer());
+
+            Gson gson = builder.create();
+
+            ReturnList = gson.fromJson(FileData, Media[].class);
+            return ReturnList;
+        } catch (IOException e){
             System.out.println("File not found");
             e.printStackTrace();
         }
@@ -48,6 +65,24 @@ public class UTILS {
             for (int i=0;i<Data.length;i++){
                 Saver.write(i + "," + Data[i].Name + "," + Data[i].Author + "," + new SimpleDateFormat("M/d/y").format(Data[i].ReleaseDate.getTime()) + "," + Data[i].TimelineDate.toString() + "," + UTILS.CategoryToName.get(Data[i].Category) + "," + (Data[i].Owned?"True":"False") + "," + (Data[i].Read?"True":"False") + "\n");
             }
+            Saver.close();
+        } catch (IOException e){
+            System.out.println("File not found");
+            e.printStackTrace();
+        }
+    }
+
+    public static void SaveJSONData(Media[] Data){
+        try {
+            FileWriter Saver = new FileWriter(Filename);
+
+            GsonBuilder builder = new GsonBuilder().setPrettyPrinting().excludeFieldsWithoutExposeAnnotation();
+            builder.registerTypeAdapter(Calendar.class, new CalendarSerializer());
+            builder.registerTypeAdapter(LegendsDate.class, new TimelineSerializer());
+
+            Gson gson = builder.create();
+
+            Saver.write(gson.toJson(Data));
             Saver.close();
         } catch (IOException e){
             System.out.println("File not found");

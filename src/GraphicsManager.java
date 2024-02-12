@@ -33,7 +33,8 @@ public class GraphicsManager {
 
         for(Media Item : this.DisplayData) {
             Item.setVisible(true);
-            Item.GM = this;
+            Item.DisplayDetails();
+            Item.setGM(this);
             rootPanel.add(Item, Component.LEFT_ALIGNMENT);
         }
 
