@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.time.chrono.Era;
 import java.util.*;
 import java.util.List;
 
@@ -11,8 +12,8 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
     JTextField AuthorChoice;
     String AuthorString = "";
 
-    JSlider TimelineChoice;
-    int TimelineInt;
+    JComboBox EraChoice;
+    String EraString = "";
 
     JComboBox CategoryChoice;
     String CategoryString = "";
@@ -67,14 +68,10 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
 
         // Release Date Selection TODO
 
-        /* Timeline Date Selection TODO
-        TimelineChoice = new JSlider(Arrays.stream(Manager.Data).min(Comparator.comparingInt(s -> s.TimelineDate.toInt())).get().TimelineDate.toInt(),Arrays.stream(Manager.Data).max(Comparator.comparingInt(s -> s.TimelineDate.toInt())).get().TimelineDate.toInt());
-        TimelineChoice.setPaintTrack(true);
-        TimelineChoice.setPaintTicks(true);
-        TimelineChoice.setPaintLabels(true);
-        TimelineChoice.setMajorTickSpacing((TimelineChoice.getMaximum()-TimelineChoice.getMinimum())/2);
-        TimelineChoice.setMinorTickSpacing(TimelineChoice.getMajorTickSpacing()/10);
-        this.add(TimelineChoice, Component.TOP_ALIGNMENT); */
+        // Timeline Date Selection
+        EraChoice = new JComboBox(UTILS.EraList.keySet().toArray());
+        EraChoice.addItemListener(this);
+        this.add(EraChoice, BorderLayout.CENTER);
 
         // Category Selection
         CategoryChoice = new JComboBox(UTILS.CategoryToName.values().toArray());
@@ -115,7 +112,7 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
                         (!NameString.equals("") && !s.Name.toUpperCase().contains(NameString.toUpperCase())) ||
                                 (!AuthorString.equals("") && !s.Author.toUpperCase().contains(AuthorString.toUpperCase())) ||
             //Release Date TODO
-            //Timeline Date TODO
+            (!EraString.equals("") && !UTILS.InEra(EraString, s.TimelineDate)) ||
             (!CategoryString.equals("") && !s.Category.equals(CategoryString)) ||
                                 (OwnedBool && !s.Owned) ||
             (ReadBool && !s.Read));
@@ -143,7 +140,9 @@ public class Menu extends JPanel implements ItemListener, KeyListener, ActionLis
             CategoryString = ((String) ((JComboBox) source).getSelectedItem());
         } else if (source == OwnedChoice){
             OwnedBool = !OwnedBool;
-        }else if (source == ReadChoice){
+        } else if (source == EraChoice) {
+            EraString = (String) ((JComboBox) source).getSelectedItem();
+        } else if (source == ReadChoice){
             ReadBool = !ReadBool;
         } else if (source == SortChoice){
             SortType = (String) ((JComboBox) source).getSelectedItem();

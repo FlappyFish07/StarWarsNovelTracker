@@ -4,20 +4,10 @@
     "Name": "A Droid's Tale",
     "Author": "John Whitman",
     "ReleaseDate": {"year": 1997, "month": 2, "dayOfMonth": 11, "hourOfDay": 0, "minute": 0, "second": 0},
-    "TimelineDate": {"Start Date": 0, "Start ABY": false, "One Date": true},
+    "TimelineDate": {"Start Date": 4, "Start ABY": true, "One Date": true},
     "Category": "Children\u0027s Book",
     "Owned": false,
     "Read": false,
     "Children": []
-  }, {
-  "index": 0,
-  "Name": "A Droid's Tale",
-  "Author": "John Whitman",
-  "ReleaseDate": {"year": 1997, "month": 1, "dayOfMonth": 11, "hourOfDay": 0, "minute": 0, "second": 0},
-  "TimelineDate": {"Start Date": 0, "Start ABY": false, "One Date": true},
-  "Category": "Children\u0027s Book",
-  "Owned": false,
-  "Read": false,
-  "Children": []
-}
+  }
 ]

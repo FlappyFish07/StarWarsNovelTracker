@@ -11,6 +11,7 @@ public class TimelineDeserializer implements JsonDeserializer<LegendsDate> {
     public LegendsDate deserialize(JsonElement json, Type calendar, JsonDeserializationContext context) {
         LegendsDate ReturnDate;
         if (json.getAsJsonObject().get("One Date").getAsBoolean()){
+            System.out.println(json.getAsJsonObject().get("Start Date").getAsInt());
             ReturnDate = new LegendsDate(json.getAsJsonObject().get("Start ABY").getAsBoolean(),json.getAsJsonObject().get("Start Date").getAsInt());
         } else {
             ReturnDate = new LegendsDate(json.getAsJsonObject().get("Start ABY").getAsBoolean(),json.getAsJsonObject().get("Start Date").getAsInt(),json.getAsJsonObject().get("End ABY").getAsBoolean(),json.getAsJsonObject().get("End Date").getAsInt());

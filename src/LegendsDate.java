@@ -37,8 +37,28 @@ public class LegendsDate {
             this.OneDate = true;
         }
     }
+    public boolean isWithin(LegendsDate Bounds){
+        if(Bounds.OneDate){
+            return false;
+        }
+        System.out.println(this.toInt() + " " + Bounds.toInt() + "," + Bounds.toEndInt());
+        if(this.toInt() < Bounds.toInt() || this.toInt() > Bounds.toEndInt()){
+            return false;
+        }
+        System.out.println(this.OneDate);
+        if (this.OneDate){
+            return true;
+        }
+        if (this.toEndInt() < Bounds.toInt() && this.toEndInt() > Bounds.toEndInt()){
+            return false;
+        }
+        return true;
+    }
     public int toInt(){
         return ABY?StartDate:-StartDate;
+    }
+    public int toEndInt(){
+        return EndABY?EndDate:-EndDate;
     }
 
     @Override
